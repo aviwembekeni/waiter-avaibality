@@ -15,7 +15,7 @@ const pool = new Pool({
   ssl: useSSL
 });
 
-const WaiterAvailability = require("../waiter-availablity");
+const WaiterAvailability = require("../waiter-availability");
 
 describe("getWeekdays", function() {
   it("should return weekdays", async function() {
@@ -76,42 +76,13 @@ describe("addShift", function() {
   it("should add shifts", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
-    /*const shiftList = [
-      { id: 1, waiter_id: 1, weekday_id: 1 },
-      { id: 2, waiter_id: 1, weekday_id: 2 },
-      { id: 3, waiter_id: 1, weekday_id: 3 },
-      { id: 4, waiter_id: 2, weekday_id: 3 },
-      { id: 5, waiter_id: 2, weekday_id: 4 },
-      { id: 6, waiter_id: 2, weekday_id: 5 },
-      { id: 7, waiter_id: 3, weekday_id: 5 },
-      { id: 8, waiter_id: 3, weekday_id: 6 },
-      { id: 9, waiter_id: 3, weekday_id: 7 },
-      { id: 10, waiter_id: 2, weekday_id: 4 }
-    ];*/
+    await waiterAvail.addShift("johndoe", "Saturday");
 
-    await waiterAvail.addShift("johndoe", "Thursday");
-
-    let waiter_ids = await pool.query(
-      "SELECT id from users WHERE user_name = $1",
-      ["johndoe"]
+    let results = await pool.query(
+      "SELECT user_name, day_name FROM users JOIN shifts ON users.id = shifts.waiter_id JOIN weekdays ON shifts.weekday_id = weekdays.id WHERE user_name = $1 AND day_name = $2",
+      ["johndoe", "Thursday"]
     );
 
-    let weekday_ids = await pool.query(
-      "SELECT id from weekdays WHERE day_name = $1",
-      ["Thursday"]
-    );
-
-    let waiter_id = waiter_ids.rows[0].id;
-    let weekday_id = weekday_ids.rows[0].id;
-
-    let shifts = await pool.query(
-      "select * from shifts WHERE waiter_id = $1 and weekday_id = $2",
-      [waiter_id, weekday_id]
-    );
-
-    let shift = shifts.rows[0];
-
-    assert.equal(waiter_id, shift.waiter_id);
-    assert.equal(weekday_id, shift.weekday_id);
+    assert.notEqual(0, results.rowCount);
   });
 });
