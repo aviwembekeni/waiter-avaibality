@@ -20,14 +20,14 @@ if (process.env.DATABASE_URL) {
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://aviwe:aviwe@localhost:5432/waiter_availability";
+  "postgresql://aviwe:aviwe@localhost:5432/waiter-availability";
 
 const pool = new Pool({
   connectionString,
   ssl: useSSL
 });
 
-const registration_numbers = Registration_numbers(pool);
+const waiterAvailability = WaiterAvailability(pool);
 
 app.engine(
   "handlebars",
@@ -51,6 +51,22 @@ app.use(flash());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.render("landing");
+});
+
+app.post("/days", async function(req, res, next) {
+  try {
+    let userName = req.body.userName;
+    const userType = await waiterAvailability.getUserType(userName);
+    if (userType === "admin") {
+      res.render("days", {});
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.get("/waiters/:username", async function(req, res, next) {
   try {

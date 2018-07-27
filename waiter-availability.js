@@ -1,6 +1,6 @@
 module.exports = function(pool) {
   async function getWeekdays() {
-    var weekdays = await pool.query("SELECT * FROM weekdays");
+    const weekdays = await pool.query("SELECT * FROM weekdays");
     return weekdays.rows;
   }
 
@@ -14,7 +14,7 @@ module.exports = function(pool) {
   }
 
   async function getUsers() {
-    var users = await pool.query("SELECT * FROM users");
+    const users = await pool.query("SELECT * FROM users");
 
     return users.rows;
   }
@@ -40,9 +40,24 @@ module.exports = function(pool) {
   }
 
   async function getShifts() {
-    var shifts = await pool.query("SELECT * FROM shifts");
+    const shifts = await pool.query("SELECT * FROM shifts");
 
     return shifts.rows;
+  }
+
+  async function getUserType(username) {
+    if (username !== "") {
+      const userType = await pool.query(
+        "SELECT user_type from users WHERE user_name = $1",
+        [username]
+      );
+
+      if (userType.rowCount !== 0) {
+        return userType.rows[0].user_type;
+      } else {
+        return "";
+      }
+    }
   }
 
   return {
@@ -50,6 +65,7 @@ module.exports = function(pool) {
     addUser,
     getUsers,
     addShift,
-    getShifts
+    getShifts,
+    getUserType
   };
 };

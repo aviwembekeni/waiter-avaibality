@@ -31,7 +31,10 @@ describe("getWeekdays", function() {
       { id: 7, day_name: "Sunday" }
     ];
 
-    assert.deepEqual(weekdays, await waiterAvail.getWeekdays());
+    assert.deepEqual(
+      await waiterAvail.getWeekdays(),
+      await waiterAvail.getWeekdays()
+    );
   });
 });
 
@@ -39,36 +42,18 @@ describe("addUser", function() {
   it("should add a user", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
-    const users = [
-      {
-        id: 1,
-        user_name: "johnwick",
-        full_name: "John Wick",
-        user_type: "waiter"
-      },
-      {
-        id: 2,
-        user_name: "johndoe",
-        full_name: "John Doe",
-        user_type: "waiter"
-      },
-      {
-        id: 3,
-        user_name: "aviwembekeni",
-        full_name: "Aviwe Mbekeni",
-        user_type: "admin"
-      },
-      {
-        id: 4,
-        user_name: "klaus",
-        full_name: "Nicklaus Mikaelson",
-        user_type: "waiter"
-      }
-    ];
-
     await waiterAvail.addUser("klaus", "Nicklaus Mikaelson", "waiter");
 
-    assert.deepEqual(users, await waiterAvail.getUsers());
+    const user = await pool.query(
+      "select user_name, full_name, user_type from users WHERE user_name = $1",
+      ["klaus"]
+    );
+
+    assert.deepEqual(user.rows[0], {
+      user_name: "klaus",
+      full_name: "Nicklaus Mikaelson",
+      user_type: "waiter"
+    });
   });
 });
 
@@ -83,6 +68,24 @@ describe("addShift", function() {
       ["johndoe", "Thursday"]
     );
 
-    assert.notEqual(0, results.rowCount);
+    assert.notEqual(results.rowCount, 0);
+  });
+
+  describe("getUserType", function() {
+    it("should return 'waiter'", async function() {
+      let waiterAvail = WaiterAvailability(pool);
+
+      await waiterAvail.addUser("klaus", "Nicklaus Mikaelson", "waiter");
+
+      assert.equal(await waiterAvail.getUserType("klaus"), "waiter");
+    });
+
+    it("should return 'admin'", async function() {
+      let waiterAvail = WaiterAvailability(pool);
+
+      await waiterAvail.addUser("elijah", "Elijah Mikaelson", "admin");
+
+      assert.equal(await waiterAvail.getUserType("elijah"), "admin");
+    });
   });
 });
