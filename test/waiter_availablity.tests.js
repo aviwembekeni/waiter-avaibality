@@ -1,5 +1,5 @@
 "Use strict";
-var assert = require("assert");
+const assert = require("assert");
 const pg = require("pg");
 const Pool = pg.Pool;
 
@@ -38,6 +38,32 @@ describe("getWeekdays", function() {
   });
 });
 
+describe("getShifts", function() {
+  it("should return shifts", async function() {
+    let waiterAvail = WaiterAvailability(pool);
+
+    let shifts = [
+      { id: 1, day_name: "Monday", shifts: ["John Wick"] },
+      { id: 2, day_name: "Tuesday", shifts: ["John Wick"] },
+      {
+        id: 3,
+        day_name: "Wednesday",
+        shifts: ["John Wick", "John Doe"]
+      },
+      { id: 4, day_name: "Thursday", shifts: ["John Doe"] },
+      {
+        id: 5,
+        day_name: "Friday",
+        shifts: ["John Doe", "Aviwe Mbekeni"]
+      },
+      { id: 6, day_name: "Saturday", shifts: ["Aviwe Mbekeni"] },
+      { id: 7, day_name: "Sunday", shifts: ["Aviwe Mbekeni"] }
+    ];
+
+    assert.deepEqual(await waiterAvail.getShifts(), shifts);
+  });
+});
+
 describe("addUser", function() {
   it("should add a user", async function() {
     let waiterAvail = WaiterAvailability(pool);
@@ -61,14 +87,20 @@ describe("addShift", function() {
   it("should add shifts", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
-    await waiterAvail.addShift("johndoe", "Saturday");
+    await waiterAvail.addShift("johndoe", ["Saturday", "Tuesday"]);
 
-    let results = await pool.query(
+    let results1 = await pool.query(
       "SELECT user_name, day_name FROM users JOIN shifts ON users.id = shifts.waiter_id JOIN weekdays ON shifts.weekday_id = weekdays.id WHERE user_name = $1 AND day_name = $2",
-      ["johndoe", "Thursday"]
+      ["johndoe", "Saturday"]
     );
 
-    assert.notEqual(results.rowCount, 0);
+    let results2 = await pool.query(
+      "SELECT user_name, day_name FROM users JOIN shifts ON users.id = shifts.waiter_id JOIN weekdays ON shifts.weekday_id = weekdays.id WHERE user_name = $1 AND day_name = $2",
+      ["johndoe", "Saturday"]
+    );
+
+    assert.notEqual(results1.rowCount, 0);
+    assert.notEqual(results1.rowCount, 0);
   });
 
   describe("getUserType", function() {

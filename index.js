@@ -32,7 +32,16 @@ const waiterAvailability = WaiterAvailability(pool);
 app.engine(
   "handlebars",
   exphbs({
-    defaultLayout: "main"
+    defaultLayout: "main",
+    helpers: {
+      style: function() {
+        if (this.shifts.length === 3) {
+          return "green";
+        } else if (this.shifts.length > 3) {
+          return "blue";
+        }
+      }
+    }
   })
 );
 
@@ -60,8 +69,10 @@ app.post("/days", async function(req, res, next) {
   try {
     let userName = req.body.userName;
     const userType = await waiterAvailability.getUserType(userName);
+    const sortedShifts = await waiterAvailability.getShifts();
+
     if (userType === "admin") {
-      res.render("days", {});
+      res.render("days", { sortedShifts });
     }
   } catch (error) {
     next(error);
@@ -70,7 +81,17 @@ app.post("/days", async function(req, res, next) {
 
 app.get("/waiters/:username", async function(req, res, next) {
   try {
-    res.render("waiters", {});
+    const username = req.params.username;
+    const weekdays = await waiterAvailability.getWeekdays();
+    res.render("waiters", { weekdays, username });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/waiters/:username", async function(req, res, next) {
+  try {
+    await waiterAvailability.addShift(req.params.username, req.body.day_name);
   } catch (error) {
     next(error);
   }

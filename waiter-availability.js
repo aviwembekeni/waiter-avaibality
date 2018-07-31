@@ -25,24 +25,92 @@ module.exports = function(pool) {
       [username]
     );
 
-    const dayIds = await pool.query(
-      "SELECT id from weekdays WHERE day_name= $1",
-      [day]
-    );
+    let weekday_ids = [];
+
+    for (let i = 0; i < day.length; i++) {
+      const dayIds = await pool.query(
+        "SELECT id from weekdays WHERE day_name= $1",
+        [day[i]]
+      );
+
+      let id = dayIds.rows[0].id;
+
+      weekday_ids.push(id);
+    }
 
     const userId = userIds.rows[0].id;
-    const dayId = dayIds.rows[0].id;
 
-    await pool.query(
-      "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
-      [userId, dayId]
-    );
+    for (let i = 0; i < weekday_ids.length; i++) {
+      await pool.query(
+        "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
+        [userId, weekday_ids[i]]
+      );
+    }
   }
 
   async function getShifts() {
-    const shifts = await pool.query("SELECT * FROM shifts");
+    const shifts = await pool.query(
+      "SELECT day_name, full_name FROM shifts JOIN users ON shifts.waiter_id = users.id JOIN weekdays ON shifts.weekday_id = weekdays.id"
+    );
+    const sortedShifts = [
+      {
+        id: 1,
+        day_name: "Monday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 2,
+        day_name: "Tuesday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 3,
+        day_name: "Wednesday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 4,
+        day_name: "Thursday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 5,
+        day_name: "Friday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 6,
+        day_name: "Saturday",
+        shifts: [],
+        color: ""
+      },
+      {
+        id: 7,
+        day_name: "Sunday",
+        shifts: [],
+        color: ""
+      }
+    ];
 
-    return shifts.rows;
+    shifts.rows.forEach(shift => {
+      sortedShifts.forEach(sortedShifts => {
+        if (shift.day_name == sortedShifts.day_name) {
+          sortedShifts.shifts.push(shift.full_name);
+        }
+        if (sortedShifts.shifts.length == 3) {
+          sortedShifts.color = "green";
+        } else if (sortedShifts.shifts.length > 3) {
+          sortedShifts.color = "blue";
+        }
+      });
+    });
+
+    return sortedShifts;
   }
 
   async function getUserType(username) {

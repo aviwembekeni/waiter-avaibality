@@ -1,0 +1,23 @@
+<div>
+    <h3>Greetings, {{username}}</h3>
+    <form action="/waiters/{{username}}" method="POST">
+        <table id="weekdays">
+
+            <tr>
+                {{#each weekdays}}
+                <th>{{day_name}}</th>
+                {{/each}}
+            </tr>
+            <tr>
+                {{#each weekdays}}
+                <td>
+                    <input type="checkbox" name="day_name" id="" value="{{day_name}}">
+                </td>
+                {{/each}}
+            </tr>
+        </table>
+
+        <button type="submit">Add shifts</button>
+
+    </form>
+</div>

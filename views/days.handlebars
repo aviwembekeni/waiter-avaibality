@@ -1,7 +1,15 @@
 <div class="">
-    <h2 style="text-align: center">Waiter Availability</h2>
+    <h2 style="text-align: center">DAYS</h2>
     <div class="mdl-grid">
-        <h3>DAYS</h3>
+        {{#each sortedShifts}}
+
+        <ul id="shiftdays">
+            <h6>{{day_name}}</h6>
+            {{#each shifts}}
+            <li class={{../color}}>{{ this }}</li>
+            {{/each}}
+        </ul>
+        {{/each}}
     </div>
 
 </div>
