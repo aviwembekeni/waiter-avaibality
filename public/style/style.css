@@ -62,8 +62,38 @@ ul {
   background-color: #c51162;
 }
 
+.success{
+  width: 30%;
+  margin: 0 auto;
+  background-color: #4caf50;
+  padding: 10px 20px;
+}
+
+.success h5{
+  text-align: center;
+}
+
+.addShift{
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.inline{
+  display: inline-block;
+}
+
+.homeRoute{
+  padding-left: 10%;
+}
+
 @media only screen and (max-width: 960px) {
   #shiftdays {
     width: 25%;
+  }
+}
+
+@media only screen and (min-width: 630px) {
+  .homeRoute{
+    margin-left: 40%;
   }
 }

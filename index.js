@@ -20,7 +20,7 @@ if (process.env.DATABASE_URL) {
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://aviwe:aviwe@localhost:5432/waiter-availability";
+  "postgresql://postgres:lavish@localhost:5432/waiter-availability";
 
 const pool = new Pool({
   connectionString,
@@ -40,7 +40,14 @@ app.engine(
         } else if (this.shifts.length > 3) {
           return "blue";
         }
-      }
+      },
+      flashStyle: function(){
+        if(this.messages.info == "Shift(s) successfully added!"){
+            return "success";
+        }else {
+            return "failure";
+        }
+    }
     }
   })
 );
@@ -65,7 +72,7 @@ app.get("/", (req, res) => {
   res.render("landing");
 });
 
-app.post("/days", async function(req, res, next) {
+app.post("/login", async function(req, res, next) {
   try {
     let userName = req.body.userName;
     const userType = await waiterAvailability.getUserType(userName);
@@ -73,6 +80,10 @@ app.post("/days", async function(req, res, next) {
 
     if (userType === "admin") {
       res.render("days", { sortedShifts });
+    }else if (userType === "waiter") {
+      res.redirect('/waiters/'+ userName)
+    }else{
+      res.redirect('/')
     }
   } catch (error) {
     next(error);
@@ -91,7 +102,17 @@ app.get("/waiters/:username", async function(req, res, next) {
 
 app.post("/waiters/:username", async function(req, res, next) {
   try {
-    await waiterAvailability.addShift(req.params.username, req.body.day_name);
+    let dayName = req.body.day_name;
+    if (dayName) {
+      let added = await waiterAvailability.addShift(req.params.username, dayName);
+      if (added) {
+        req.flash('info', "Shift(s) successfully added!");
+      } 
+      
+    }
+    res.redirect('/waiters/'+req.params.username);
+    
+    
   } catch (error) {
     next(error);
   }

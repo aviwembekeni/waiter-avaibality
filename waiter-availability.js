@@ -25,6 +25,10 @@ module.exports = function(pool) {
       [username]
     );
 
+    if(typeof(day) == "string"){
+      day = day.split(" ");
+    }
+
     let weekday_ids = [];
 
     for (let i = 0; i < day.length; i++) {
@@ -41,11 +45,16 @@ module.exports = function(pool) {
     const userId = userIds.rows[0].id;
 
     for (let i = 0; i < weekday_ids.length; i++) {
-      await pool.query(
-        "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
-        [userId, weekday_ids[i]]
-      );
+      const shift = await pool.query('SELECT * FROM shifts WHERE waiter_id = $1 AND weekday_id = $2', [userId, weekday_ids[i]])
+      if (shift.rowCount == 0) {
+          await pool.query(
+            "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
+            [userId, weekday_ids[i]]
+          );
+      }
+      
     }
+    return true;
   }
 
   async function getShifts() {
