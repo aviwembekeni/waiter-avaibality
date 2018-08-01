@@ -62,28 +62,32 @@ ul {
   background-color: #c51162;
 }
 
-.success{
+.success {
   width: 30%;
   margin: 0 auto;
   background-color: #4caf50;
   padding: 10px 20px;
 }
 
-.success h5{
+.success h5 {
   text-align: center;
 }
 
-.addShift{
+.addShift {
   margin-top: 10px;
   padding: 10px;
 }
 
-.inline{
+.inline {
   display: inline-block;
 }
 
-.homeRoute{
+.homeRoute {
   padding-left: 10%;
+}
+
+.center {
+  margin: 0 auto;
 }
 
 @media only screen and (max-width: 960px) {
@@ -93,7 +97,7 @@ ul {
 }
 
 @media only screen and (min-width: 630px) {
-  .homeRoute{
+  .homeRoute {
     margin-left: 40%;
   }
 }
