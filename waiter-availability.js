@@ -137,12 +137,20 @@ module.exports = function(pool) {
     }
   }
 
+  async function deleteShifts() {
+      const userType = await pool.query(
+        "DELETE FROM shifts"
+      );
+
+  }
+
   return {
     getWeekdays,
     addUser,
     getUsers,
     addShift,
     getShifts,
-    getUserType
+    getUserType,
+    deleteShifts
   };
 };

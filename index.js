@@ -72,7 +72,7 @@ app.get("/", (req, res) => {
   res.render("landing");
 });
 
-app.post("/login", async function(req, res, next) {
+/*app.post("/login", async function(req, res, next) {
   try {
     let userName = req.body.userName;
     const userType = await waiterAvailability.getUserType(userName);
@@ -85,6 +85,16 @@ app.post("/login", async function(req, res, next) {
     }else{
       res.redirect('/')
     }
+  } catch (error) {
+    next(error);
+  }
+});*/
+
+app.get("/days", async function(req, res, next) {
+  try {
+    const sortedShifts = await waiterAvailability.getShifts();
+
+      res.render("days", { sortedShifts });
   } catch (error) {
     next(error);
   }
@@ -113,6 +123,17 @@ app.post("/waiters/:username", async function(req, res, next) {
     res.redirect('/waiters/'+req.params.username);
     
     
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/delete", async function(req, res, next) {
+  try {
+    await waiterAvailability.deleteShifts();
+    const sortedShifts = await waiterAvailability.getShifts();
+
+      res.render("days", { sortedShifts });
   } catch (error) {
     next(error);
   }
