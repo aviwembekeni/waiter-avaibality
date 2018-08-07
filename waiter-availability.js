@@ -1,7 +1,21 @@
 module.exports = function(pool) {
-  async function getWeekdays() {
-    const weekdays = await pool.query("SELECT * FROM weekdays");
-    return weekdays.rows;
+  async function getWeekdays(user_name) {
+    const weekdaysList = await pool.query("SELECT * FROM weekdays");
+    const weekdays = weekdaysList.rows;
+    if (user_name) {
+      const userShifts =  await getUserShifts(user_name);
+      
+      weekdays.forEach(day => {
+        userShifts.forEach(shiftDay => {
+         
+          if (day.day_name == shiftDay.day_name) {
+            day.checked = "checked";
+          }
+        })
+      })
+    } 
+    
+    return weekdays;
   }
 
   async function addUser(username = "", fullname = "", usertype = "") {
@@ -44,14 +58,12 @@ module.exports = function(pool) {
 
     const userId = userIds.rows[0].id;
 
+    await pool.query('DELETE from shifts WHERE waiter_id = $1', [userId]);
     for (let i = 0; i < weekday_ids.length; i++) {
-      const shift = await pool.query('SELECT * FROM shifts WHERE waiter_id = $1 AND weekday_id = $2', [userId, weekday_ids[i]])
-      if (shift.rowCount == 0) {
-          await pool.query(
-            "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
-            [userId, weekday_ids[i]]
-          );
-      }
+      
+        await pool.query(
+          "INSERT INTO shifts (waiter_id, weekday_id) VALUES ( $1, $2)",
+          [userId, weekday_ids[i]]);
       
     }
     return true;
@@ -144,6 +156,14 @@ module.exports = function(pool) {
 
   }
 
+  async function getUserShifts(user_name){
+    if (user_name) {
+      const userShifts = await pool.query("SELECT day_name FROM shifts join weekdays on shifts.weekday_id = weekdays.id join users on shifts.waiter_id = users.id WHERE user_name = $1", [user_name]);
+      
+      return userShifts.rows
+    }
+  }
+
   return {
     getWeekdays,
     addUser,
@@ -151,6 +171,7 @@ module.exports = function(pool) {
     addShift,
     getShifts,
     getUserType,
-    deleteShifts
+    deleteShifts,
+    getUserShifts
   };
 };

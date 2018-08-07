@@ -16,6 +16,7 @@
     "lsof": "^0.1.0",
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",
+    "psql": "0.0.1",
     "semantic-ui": "^2.3.3"
   },
   "devDependencies": {

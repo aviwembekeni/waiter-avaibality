@@ -103,7 +103,8 @@ app.get("/days", async function(req, res, next) {
 app.get("/waiters/:username", async function(req, res, next) {
   try {
     const username = req.params.username;
-    const weekdays = await waiterAvailability.getWeekdays();
+    const weekdays = await waiterAvailability.getWeekdays(username);
+    
     res.render("waiters", { weekdays, username });
   } catch (error) {
     next(error);
@@ -115,6 +116,7 @@ app.post("/waiters/:username", async function(req, res, next) {
     let dayName = req.body.day_name;
     if (dayName) {
       let added = await waiterAvailability.addShift(req.params.username, dayName);
+      
       if (added) {
         req.flash('info', "Shift(s) successfully added!");
       } 
