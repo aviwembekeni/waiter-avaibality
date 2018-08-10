@@ -69,6 +69,13 @@ ul {
   padding: 10px 20px;
 }
 
+.failure {
+  width: 30%;
+  margin: 0 auto;
+  background-color: red;
+  padding: 10px 20px;
+}
+
 .success h5 {
   text-align: center;
 }

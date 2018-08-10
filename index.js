@@ -85,6 +85,7 @@ app.post("/login", async function(req, res, next) {
     } else if (userType === "waiter") {
       res.redirect("/waiters/" + userName);
     } else {
+      req.flash("error", "User does not exist");
       res.redirect("/");
     }
   } catch (error) {

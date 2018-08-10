@@ -15,6 +15,11 @@
                 <button type="submit" class="fluid ui blue submit button">Login</button>
             </form>
         </div>
+        {{#if messages.error}}
+        <div class="{{flashStyle}} margin">
+            <h5>{{messages.error}}</h5>
+        </div>
+        {{/if}}
 
         <div class="ui form margin">
             <h2 style="">Register</h2>

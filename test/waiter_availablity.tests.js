@@ -18,6 +18,12 @@ const pool = new Pool({
 const WaiterAvailability = require("../waiter-availability");
 
 describe("getWeekdays", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from weekdays");
+    await pool.query("delete from waiter");
+  });
+
   it("should return weekdays", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
@@ -39,6 +45,12 @@ describe("getWeekdays", function() {
 });
 
 describe("getShifts", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from weekdays");
+    await pool.query("delete from waiter");
+  });
+
   it("should return shifts", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
@@ -65,6 +77,12 @@ describe("getShifts", function() {
 });
 
 describe("addUser", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from weekdays");
+    await pool.query("delete from waiter");
+  });
+
   it("should add a user", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
@@ -84,6 +102,12 @@ describe("addUser", function() {
 });
 
 describe("addShift", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from weekdays");
+    await pool.query("delete from waiter");
+  });
+
   it("should add shifts", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
@@ -102,22 +126,32 @@ describe("addShift", function() {
     assert.notEqual(results1.rowCount, 0);
     assert.notEqual(results1.rowCount, 0);
   });
+});
 
-  describe("getUserType", function() {
-    it("should return 'waiter'", async function() {
-      let waiterAvail = WaiterAvailability(pool);
+describe("getUserType", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from weekdays");
+    await pool.query("delete from waiter");
+  });
 
-      await waiterAvail.addUser("klaus", "Nicklaus Mikaelson", "waiter");
+  it("should return 'waiter'", async function() {
+    let waiterAvail = WaiterAvailability(pool);
 
-      assert.equal(await waiterAvail.getUserType("klaus"), "waiter");
-    });
+    await waiterAvail.addUser("klaus", "Nicklaus Mikaelson", "waiter");
 
-    it("should return 'admin'", async function() {
-      let waiterAvail = WaiterAvailability(pool);
+    assert.equal(await waiterAvail.getUserType("klaus"), "waiter");
+  });
 
-      await waiterAvail.addUser("elijah", "Elijah Mikaelson", "admin");
+  it("should return 'admin'", async function() {
+    let waiterAvail = WaiterAvailability(pool);
 
-      assert.equal(await waiterAvail.getUserType("elijah"), "admin");
-    });
+    await waiterAvail.addUser("elijah", "Elijah Mikaelson", "admin");
+
+    assert.equal(await waiterAvail.getUserType("elijah"), "admin");
+  });
+
+  after(async function() {
+    await pool.end();
   });
 });
