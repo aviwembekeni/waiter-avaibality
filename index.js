@@ -41,13 +41,16 @@ app.engine(
           return "blue";
         }
       },
-      flashStyle: function(){
-        if(this.messages.info == "Shift(s) successfully added!"){
-            return "success";
-        }else {
-            return "failure";
+      flashStyle: function() {
+        if (
+          this.messages.info == "Shift(s) successfully added!" ||
+          this.messages.info == "User successfully added!"
+        ) {
+          return "success";
+        } else {
+          return "failure";
         }
-    }
+      }
     }
   })
 );
@@ -72,29 +75,28 @@ app.get("/", (req, res) => {
   res.render("landing");
 });
 
-/*app.post("/login", async function(req, res, next) {
+app.post("/login", async function(req, res, next) {
   try {
     let userName = req.body.userName;
     const userType = await waiterAvailability.getUserType(userName);
-    const sortedShifts = await waiterAvailability.getShifts();
 
     if (userType === "admin") {
-      res.render("days", { sortedShifts });
-    }else if (userType === "waiter") {
-      res.redirect('/waiters/'+ userName)
-    }else{
-      res.redirect('/')
+      res.redirect("/days");
+    } else if (userType === "waiter") {
+      res.redirect("/waiters/" + userName);
+    } else {
+      res.redirect("/");
     }
   } catch (error) {
     next(error);
   }
-});*/
+});
 
 app.get("/days", async function(req, res, next) {
   try {
     const sortedShifts = await waiterAvailability.getShifts();
 
-      res.render("days", { sortedShifts });
+    res.render("days", { sortedShifts });
   } catch (error) {
     next(error);
   }
@@ -104,7 +106,7 @@ app.get("/waiters/:username", async function(req, res, next) {
   try {
     const username = req.params.username;
     const weekdays = await waiterAvailability.getWeekdays(username);
-    
+
     res.render("waiters", { weekdays, username });
   } catch (error) {
     next(error);
@@ -115,16 +117,16 @@ app.post("/waiters/:username", async function(req, res, next) {
   try {
     let dayName = req.body.day_name;
     if (dayName) {
-      let added = await waiterAvailability.addShift(req.params.username, dayName);
-      
+      let added = await waiterAvailability.addShift(
+        req.params.username,
+        dayName
+      );
+
       if (added) {
-        req.flash('info', "Shift(s) successfully added!");
-      } 
-      
+        req.flash("info", "Shift(s) successfully added!");
+      }
     }
-    res.redirect('/waiters/'+req.params.username);
-    
-    
+    res.redirect("/waiters/" + req.params.username);
   } catch (error) {
     next(error);
   }
@@ -135,10 +137,29 @@ app.post("/delete", async function(req, res, next) {
     await waiterAvailability.deleteShifts();
     const sortedShifts = await waiterAvailability.getShifts();
 
-      res.render("days", { sortedShifts });
+    res.render("days", { sortedShifts });
   } catch (error) {
     next(error);
   }
+});
+
+app.post("/register", async function(req, res, next) {
+  try {
+    let userName = req.body.username;
+    let fullName = req.body.fullname;
+
+    var userAdded = await waiterAvailability.addUser(
+      userName,
+      fullName,
+      "waiter"
+    );
+
+    if (userAdded) {
+      req.flash("info", "User successfully added!");
+    }
+
+    res.redirect("/");
+  } catch (error) {}
 });
 
 app.listen(PORT, function() {

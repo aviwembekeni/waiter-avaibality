@@ -1,5 +1,8 @@
 <div>
-    <h3 class="inline">Greetings, {{username}} </h3>  <a href="/"><!--<h4 class="inline homeRoute">Home</h4></a>-->
+    <h3 class="inline">Greetings, {{username}} </h3>
+    <a href="/">
+        <h4 class="inline homeRoute">Home</h4>
+    </a>
     <form action="/waiters/{{username}}" method="POST">
         <table id="weekdays">
 
@@ -17,13 +20,14 @@
             </tr>
         </table>
 
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effec addShift" style="background-color:#1AB365; color:white" type="submit">Add shifts</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effec addShift" style="background-color:#1AB365; color:white"
+            type="submit">Add shifts</button>
 
         {{#if messages.info}}
-                <div class="{{flashStyle}}">
-                    <h5>{{messages.info}}</h5>
-                </div>
-            {{/if}}
+        <div class="{{flashStyle}}">
+            <h5>{{messages.info}}</h5>
+        </div>
+        {{/if}}
 
     </form>
 </div>

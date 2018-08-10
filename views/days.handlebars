@@ -1,8 +1,15 @@
 <div class="">
     <h2 style="text-align: center">DAYS</h2>
-    <form action="/delete" method="POST"><button class="negative ui button" type="submit">Delete shifts</button></form>
+    <p>
+        <a href="/">
+            <h4 class="">Home</h4>
+        </a>
+    </p>
+    <form action="/delete" method="POST">
+        <button class="negative ui button" type="submit">Delete shifts</button>
+    </form>
     <div class="mdl-grid">
-        
+
         {{#each sortedShifts}}
 
         <ul id="shiftdays">

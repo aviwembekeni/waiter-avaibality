@@ -90,6 +90,10 @@ ul {
   margin: 0 auto;
 }
 
+.margin {
+  margin-top: 20%;
+}
+
 @media only screen and (max-width: 960px) {
   #shiftdays {
     width: 25%;

@@ -1,39 +1,44 @@
-<!--<div class="">
-    
-    <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell-12-col">
-
-            <form action="/login" method="POST">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    Enter user name:
-                    <input class="mdl-textfield__input " type="text" name="userName">
-                </div>
-                <button class="mdl-button mdl-js-button mdl-button--primary" type="submit">
-                    Log In
-                </button>
-            </form>
-        </div>
-        
-
-    </div>
-
-</div>-->
 <h2 style="text-align: center">Waiter Availability</h2>
 <div class="ui two column middle aligned very relaxed stackable grid">
 
     <div class="column center">
         <div class="ui form">
-            <form action="/days" method="GET">
-                <!-- <div class="field">
-                    <label>Username</label>
+            <form action="/login" method="Post">
+                <div class="field">
+                    <label>User Name</label>
                     <div class="ui left icon input">
-                        <input type="text" placeholder="Username">
+                        <input type="text" name="userName" placeholder="Username">
                         <i class="user icon"></i>
                     </div>
-                </div>-->
+                </div>
 
-                <button type="submit" class="fluid ui blue submit button">Days</button>
+                <button type="submit" class="fluid ui blue submit button">Login</button>
             </form>
         </div>
+
+        <div class="ui form margin">
+            <h2 style="">Register</h2>
+            <form action="/register" method="POST">
+                <div class="two fields">
+                    <div class="field">
+                        <label>User Name</label>
+                        <input name="username" placeholder="User Name" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input name="fullname" placeholder="Full Name" type="text">
+                    </div>
+                </div>
+
+                <button type="submit" class="fluid ui blue submit button">Register</button>
+            </form>
+        </div>
+        {{#if messages.info}}
+        <div class="{{flashStyle}} margin">
+            <h5>{{messages.info}}</h5>
+        </div>
+        {{/if}}
+
     </div>
+
 </div>
