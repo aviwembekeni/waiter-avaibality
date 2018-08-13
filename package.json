@@ -15,8 +15,7 @@
     "express-session": "^1.15.6",
     "lsof": "^0.1.0",
     "nodemon": "^1.18.3",
-    "pg": "^7.4.3",
-    "psql": "0.0.1"
+    "pg": "^7.4.3"
   },
   "devDependencies": {
     "mocha": "^5.2.0"
