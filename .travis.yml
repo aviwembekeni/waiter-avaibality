@@ -10,6 +10,6 @@ before_script:
   - psql -U postgres -d waiter_availability_tests -a -f waiter-availabilty-script.sql
 
 addons:
-  ? apt
+  apt:
   packages:
     - postgresql-server-dev-9.2
