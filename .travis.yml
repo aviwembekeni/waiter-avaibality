@@ -8,8 +8,8 @@ node_js:
 
 before_script:
 
-  # psql -c 'create database  waiter_availability_tests;' -U postgres
-  # psql -U postgres -d waiter_availability_tests -a -f waiter-availabilty-script.sql
+  - psql -c 'create database waiters;' -U postgres
+  - psql -U postgres -d waiters -a -f waiter-availabilty-script.sql
 
 addons:
   apt:
