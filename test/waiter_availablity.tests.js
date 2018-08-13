@@ -20,67 +20,77 @@ const WaiterAvailability = require("../waiter-availability");
 describe("getWeekdays", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
-    await pool.query("delete from weekdays");
-    await pool.query("delete from waiter");
+    await pool.query("delete from users");
   });
 
   it("should return weekdays", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
     const weekdays = [
-      { id: 1, day_name: "Monday" },
-      { id: 2, day_name: "Tuesday" },
-      { id: 3, day_name: "Wednesday" },
-      { id: 4, day_name: "Thursday" },
-      { id: 5, day_name: "Friday" },
-      { id: 6, day_name: "Saturday" },
-      { id: 7, day_name: "Sunday" }
+      {
+        day_name: "Monday",
+        id: 1
+      },
+      {
+        day_name: "Tuesday",
+        id: 2
+      },
+      {
+        day_name: "Wednesday",
+        id: 3
+      },
+      {
+        day_name: "Thursday",
+        id: 4
+      },
+      {
+        day_name: "Friday",
+        id: 5
+      },
+      {
+        day_name: "Saturday",
+        id: 6
+      },
+      {
+        day_name: "Sunday",
+        id: 7
+      }
     ];
 
-    assert.deepEqual(
-      await waiterAvail.getWeekdays(),
-      await waiterAvail.getWeekdays()
-    );
+    assert.deepEqual(await waiterAvail.getWeekdays(), weekdays);
   });
 });
 
-describe("getShifts", function() {
+describe("addShift", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
-    await pool.query("delete from weekdays");
-    await pool.query("delete from waiter");
+    await pool.query("delete from users");
   });
 
-  it("should return shifts", async function() {
+  it("should add shifts", async function() {
     let waiterAvail = WaiterAvailability(pool);
 
-    let shifts = [
-      { id: 1, day_name: "Monday", shifts: ["John Wick"] },
-      { id: 2, day_name: "Tuesday", shifts: ["John Wick"] },
-      {
-        id: 3,
-        day_name: "Wednesday",
-        shifts: ["John Wick", "John Doe"]
-      },
-      { id: 4, day_name: "Thursday", shifts: ["John Doe"] },
-      {
-        id: 5,
-        day_name: "Friday",
-        shifts: ["John Doe", "Aviwe Mbekeni"]
-      },
-      { id: 6, day_name: "Saturday", shifts: ["Aviwe Mbekeni"] },
-      { id: 7, day_name: "Sunday", shifts: ["Aviwe Mbekeni"] }
-    ];
+    await waiterAvail.addUser("johnwick", "John Wick", "waiter");
 
-    assert.deepEqual(await waiterAvail.getShifts(), shifts);
+    await waiterAvail.addShift("johnwick", ["Monday", "Tuesday"]);
+
+    let shiftsList = await waiterAvail.getShifts();
+
+    let shift1 = shiftsList[0];
+    let shift2 = shiftsList[1];
+
+    assert.equal(shift1.day_name, "Monday");
+    assert.deepEqual(shift1.shifts, ["John Wick"]);
+
+    assert.equal(shift2.day_name, "Tuesday");
+    assert.deepEqual(shift2.shifts, ["John Wick"]);
   });
 });
 
 describe("addUser", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
-    await pool.query("delete from weekdays");
-    await pool.query("delete from waiter");
+    await pool.query("delete from users");
   });
 
   it("should add a user", async function() {
@@ -101,7 +111,7 @@ describe("addUser", function() {
   });
 });
 
-describe("addShift", function() {
+/*describe("addShift", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
     await pool.query("delete from weekdays");
@@ -126,13 +136,38 @@ describe("addShift", function() {
     assert.notEqual(results1.rowCount, 0);
     assert.notEqual(results1.rowCount, 0);
   });
+});*/
+
+describe("getUserShifts", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from users");
+  });
+
+  it("should return user shifts", async function() {
+    let waiterAvail = WaiterAvailability(pool);
+
+    await waiterAvail.addUser("johnwick", "John Wick", "waiter");
+    await waiterAvail.addUser("johndoe", "John Doe", "waiter");
+
+    await waiterAvail.addShift("johnwick", ["Monday", "Tuesday"]);
+    await waiterAvail.addShift("johndoe", ["Thursday", "Friday"]);
+
+    let shiftsList = await waiterAvail.getUserShifts("johndoe");
+
+    let shift1 = shiftsList[0];
+    let shift2 = shiftsList[1];
+
+    assert.equal(await shiftsList.length, 2);
+    assert.equal(shift1.day_name, "Thursday");
+    assert.equal(shift2.day_name, "Friday");
+  });
 });
 
 describe("getUserType", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
-    await pool.query("delete from weekdays");
-    await pool.query("delete from waiter");
+    await pool.query("delete from users");
   });
 
   it("should return 'waiter'", async function() {
