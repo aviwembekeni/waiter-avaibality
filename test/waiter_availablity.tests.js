@@ -164,6 +164,29 @@ describe("getUserShifts", function() {
   });
 });
 
+describe("deleteShifts", function() {
+  beforeEach(async function() {
+    await pool.query("delete from shifts");
+    await pool.query("delete from users");
+  });
+
+  it("should return 0 rowCount", async function() {
+    let waiterAvail = WaiterAvailability(pool);
+
+    await waiterAvail.addUser("johnwick", "John Wick", "waiter");
+    await waiterAvail.addUser("johndoe", "John Doe", "waiter");
+
+    await waiterAvail.addShift("johnwick", ["Monday", "Tuesday"]);
+    await waiterAvail.addShift("johndoe", ["Thursday", "Friday"]);
+
+    await waiterAvail.deleteShifts();
+
+    let shiftsList = await pool.query("select * from shifts");
+
+    assert.equal(shiftsList.rowCount, 0);
+  });
+});
+
 describe("getUserType", function() {
   beforeEach(async function() {
     await pool.query("delete from shifts");
