@@ -52,3 +52,7 @@ INSERT INTO weekdays
 values
 	('Sunday');
 
+INSERT INTO users
+	(user_name, full_name, user_type)
+VALUES
+	('aviwembekeni', 'Aviwe Mbekeni', 'admin');
